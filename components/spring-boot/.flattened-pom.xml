@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.songyu.components</groupId>
+    <artifactId>components</artifactId>
+    <version>0.0.1</version>
+  </parent>
+  <groupId>com.songyu.components.springboot</groupId>
+  <artifactId>spring-boot</artifactId>
+  <version>0.0.1</version>
+  <packaging>pom</packaging>
+  <name>Spring Boot</name>
+  <description>Spring Boot 相关</description>
+  <modules>
+    <module>starter</module>
+    <module>mvc</module>
+  </modules>
+</project>

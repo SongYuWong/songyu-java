@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.songyu</groupId>
+        <artifactId>songyu-java</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.songyu.components</groupId>
+    <artifactId>components</artifactId>
+    <packaging>pom</packaging>
+    <name>Base Components</name>
+    <description>基础组件封装</description>
+    <modules>
+        <module>spring-boot</module>
+        <module>jar-lib-crypto</module>
+        <module>common-utils</module>
+    </modules>
+
+</project>
