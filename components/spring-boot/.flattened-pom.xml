@@ -16,5 +16,16 @@
   <modules>
     <module>starter</module>
     <module>mvc</module>
+    <module>data</module>
+    <module>email</module>
+    <module>redis</module>
   </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
 </project>

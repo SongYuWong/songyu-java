@@ -19,10 +19,6 @@
             <artifactId>javassist</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.bitbucket.b_c</groupId>
-            <artifactId>jose4j</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.songyu.commonutils</groupId>
             <artifactId>common-utils</artifactId>
         </dependency>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>components</artifactId>
+        <groupId>com.songyu.components</groupId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.songyu.components.api</groupId>
+    <artifactId>api</artifactId>
+    <name>Api</name>
+    <description>接口规范统一</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.songyu.commonutils</groupId>
+            <artifactId>common-utils</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.songyu.components.jsonweb</groupId>
+            <artifactId>json-web</artifactId>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+
+</project>

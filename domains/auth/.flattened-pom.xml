@@ -11,4 +11,34 @@
   <artifactId>auth</artifactId>
   <version>0.0.1</version>
   <name>Auth</name>
+  <dependencies>
+    <dependency>
+      <groupId>com.songyu.components.springboot.mvc</groupId>
+      <artifactId>mvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.songyu.components.springboot.data</groupId>
+      <artifactId>data</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.songyu.components.springboot.email</groupId>
+      <artifactId>email</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.songyu.components.cache</groupId>
+      <artifactId>cache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.songyu.components.captcha</groupId>
+      <artifactId>captcha</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.songyu.components.lock</groupId>
+      <artifactId>lock</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.songyu.components.jsonweb</groupId>
+      <artifactId>json-web</artifactId>
+    </dependency>
+  </dependencies>
 </project>

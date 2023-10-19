@@ -16,4 +16,10 @@
     <module>jar-lib-crypto-core</module>
     <module>jar-lib-crypto-maven-plugin</module>
   </modules>
+  <dependencies>
+    <dependency>
+      <groupId>com.songyu.components.jsonweb</groupId>
+      <artifactId>json-web</artifactId>
+    </dependency>
+  </dependencies>
 </project>

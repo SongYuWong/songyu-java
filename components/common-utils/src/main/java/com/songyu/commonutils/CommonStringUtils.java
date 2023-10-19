@@ -50,5 +50,33 @@ public class CommonStringUtils {
         return str != null && str.trim().length() > 0;
     }
 
+    /**
+     * 字符串数组中是否有任意一个是空白字符串
+     *
+     * @param strs 字符串数组
+     * @return 是否有任意一个是空白字符串
+     */
+    public static boolean anyIsBlank(String... strs) {
+        for (String str : strs) {
+            if (isBlank(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    /**
+     * 字符串数组中是否所有都是空白字符串
+     *
+     * @param strs 字符串数组
+     * @return 是否有任意一个是空白字符串
+     */
+    public static boolean allIsBlank(String... strs) {
+        for (String str : strs) {
+            if (isNotBlank(str)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

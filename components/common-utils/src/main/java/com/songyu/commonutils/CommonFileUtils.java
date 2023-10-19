@@ -2,10 +2,9 @@ package com.songyu.commonutils;
 
 import com.songyu.commonutils.exception.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 /**
  * <p>
@@ -381,6 +380,62 @@ public class CommonFileUtils {
             fileOutputStream.flush();
         } catch (IOException e) {
             throw new FileWriteException();
+        }
+    }
+
+    /**
+     * 获取系统资源路径下的文件 resource 中的文件
+     *
+     * @param paths 层级文件名称
+     * @return 文件对象
+     */
+    public static File getClassPathFile(String... paths) {
+        if (paths == null || paths.length == 0) {
+            return null;
+        } else {
+            String[] pathList = new String[paths.length + 1];
+            pathList[0] = ClassLoader.getSystemResource(".").getPath();
+            System.arraycopy(paths, 0, pathList, 1, paths.length);
+            try {
+                return pathsToFile(pathList);
+            } catch (SourceNullException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * 获取类资源路径下的文件输入流，并执行某些操作
+     *
+     * @param consumer 文件输入流操作
+     * @param paths    相对类文件路径
+     */
+    public static void doWithClassPathFileInputStream(Consumer<FileInputStream> consumer, String... paths) {
+        File classPathFile = getClassPathFile(paths);
+        try (FileInputStream fileInputStream = new FileInputStream(classPathFile)) {
+            consumer.accept(fileInputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 读取类资源路径下的文件文本内容
+     *
+     * @return 文本内容
+     */
+    public static String readClassPathFileContent(String... paths) {
+        File classPathFile = getClassPathFile(paths);
+        String content = "";
+        try (FileInputStream fileInputStream = new FileInputStream(classPathFile);
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream))) {
+            String temp;
+            while ((temp = bufferedReader.readLine()) != null) {
+                content = content.concat(temp);
+            }
+            return content;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

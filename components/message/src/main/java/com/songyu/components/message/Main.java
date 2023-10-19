@@ -1,4 +1,4 @@
-package com.songyu.domains.auth;
+package com.songyu.components.message;
 
 public class Main {
     public static void main(String[] args) {

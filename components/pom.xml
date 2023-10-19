@@ -17,6 +17,13 @@
         <module>spring-boot</module>
         <module>jar-lib-crypto</module>
         <module>common-utils</module>
+        <module>captcha</module>
+        <module>lock</module>
+        <module>json-web</module>
+        <module>cache</module>
+        <module>message</module>
+        <module>task</module>
+        <module>api</module>
     </modules>
 
 </project>
