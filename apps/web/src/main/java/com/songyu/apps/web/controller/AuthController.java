@@ -5,17 +5,22 @@ import com.songyu.components.api.Response;
 import com.songyu.components.api.ResponseStatus;
 import com.songyu.components.api.SecureRequest;
 import com.songyu.components.api.SecureResponse;
+import com.songyu.components.captcha.clickimagetext.ClickImageTextPointsVerify;
 import com.songyu.components.springboot.mvc.utils.RequestParamChecker;
 import com.songyu.components.api.ApiSecureManager;
+import com.songyu.domains.auth.aggregate.AuthClient;
 import com.songyu.domains.auth.aggregate.UserLogin;
 import com.songyu.domains.auth.aggregate.UserRegistered;
 import com.songyu.domains.auth.entity.User;
+import com.songyu.domains.auth.entity.UserClient;
 import com.songyu.domains.auth.entity.UserClientTokenPair;
 import com.songyu.domains.auth.service.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.LinkedList;
 
 /**
  * <p>
@@ -52,11 +57,14 @@ public class AuthController {
     }
 
     @PostMapping("/activation")
-    public Response<?> activation(@RequestBody SecureRequest userSecureRequest) {
+    public SecureResponse<Void> activation(@RequestBody SecureRequest userSecureRequest) {
         UserRegistered userRegistered = userSecureRequest.parseRequest(apiSecureManager, UserRegistered.class);
         RequestParamChecker.notNull(userRegistered, "缺少注册的用户信息。");
         authService.activationUser(userRegistered);
-        return Response.build(ResponseStatus.SUCCESS);
+        return SecureResponse.buildWithResponse(
+                apiSecureManager,
+                Response.buildWithPayload(ResponseStatus.SUCCESS, null),
+                userSecureRequest.getKey());
     }
 
     @PostMapping("/captcha")
@@ -70,7 +78,19 @@ public class AuthController {
         );
     }
 
-    @PostMapping("login")
+    @PostMapping("/verifyCaptcha")
+    public SecureResponse<Boolean> verifyCaptcha(@RequestBody SecureRequest userClientSecureRequest) {
+        //noinspection unchecked
+        LinkedList<ClickImageTextPointsVerify.TextPoint> textPoints = userClientSecureRequest.parseRequest(apiSecureManager, LinkedList.class);
+        Boolean result = authService.verifyCaptcha(textPoints);
+        return SecureResponse.buildWithResponse(
+                apiSecureManager,
+                Response.buildWithPayload(ResponseStatus.SUCCESS, result),
+                userClientSecureRequest.getKey()
+        );
+    }
+
+    @PostMapping("/login")
     public SecureResponse<UserClientTokenPair> login(@RequestBody SecureRequest userSecureRequest) {
         UserLogin userLogin = userSecureRequest.parseRequest(apiSecureManager, UserLogin.class);
         RequestParamChecker.notNull(userLogin, "缺少登录信息。");
@@ -97,11 +117,24 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public Response<?> logout(@RequestBody SecureRequest userClientTokenPairSecureRequest) {
+    public SecureResponse<Void> logout(@RequestBody SecureRequest userClientTokenPairSecureRequest) {
         UserClientTokenPair userClientTokenPair = userClientTokenPairSecureRequest.parseRequest(apiSecureManager, UserClientTokenPair.class);
         RequestParamChecker.notNull(userClientTokenPair, "缺少认证刷新信息。");
         authService.logout(userClientTokenPair);
-        return Response.build(ResponseStatus.SUCCESS);
+        return SecureResponse.buildWithResponse(
+                apiSecureManager,
+                Response.buildWithPayload(ResponseStatus.SUCCESS, null),
+                userClientTokenPairSecureRequest.getKey());
+    }
+
+    @PostMapping("/serverPublicKey")
+    public SecureResponse<String> serverPublicKey(@RequestBody SecureRequest serverPublicKey) {
+        AuthClient ignored = serverPublicKey.verifyRequestSign(this.apiSecureManager, AuthClient.class);
+        return SecureResponse.buildWithResponse(
+                apiSecureManager,
+                Response.buildWithPayload(ResponseStatus.SUCCESS, apiSecureManager.getPublicKeyStr()),
+                serverPublicKey.getKey()
+        );
     }
 
 }

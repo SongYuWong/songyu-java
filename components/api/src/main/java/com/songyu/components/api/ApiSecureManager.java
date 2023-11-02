@@ -5,6 +5,7 @@ import com.songyu.components.jsonweb.JsonWebEncryptionService;
 import com.songyu.components.jsonweb.JsonWebKeyService;
 import com.songyu.components.jsonweb.JsonWebSignatureService;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jwk.RsaJsonWebKey;
 
 import java.security.PrivateKey;
@@ -18,6 +19,7 @@ import java.security.PublicKey;
  * @author songYu
  * @since 2023/9/15 10:51
  */
+@Slf4j
 public class ApiSecureManager {
 
     /**
@@ -45,20 +47,37 @@ public class ApiSecureManager {
     }
 
     /**
+     * 接口数据验证签名
+     *
+     * @param data 解密的数据
+     * @param key  输入端公钥
+     * @return 解密后数据串
+     */
+    public String verifySecureDataStrSign(String data, String key) {
+        try {
+            // 验证签名
+            return JsonWebSignatureService.verifySignature(data, CommonRsaKeyPairUtils.importX509PublicKey(key));
+        } catch (Exception e) {
+            throw new RuntimeException("数据安全不通过", e);
+        }
+    }
+
+
+    /**
      * 接口数据解密
      *
      * @param data 解密的数据
      * @param key  输入端公钥
      * @return 解密后数据串
      */
-    public String decryptSecureDataStr(String data, String key) {
+    public String decryptSecureDataStrSigned(String data, String key) {
         try {
             // 验证签名
             String sec = JsonWebSignatureService.verifySignature(data, CommonRsaKeyPairUtils.importX509PublicKey(key));
             // 解密
             return JsonWebEncryptionService.decrypt(sec, this.privateKey);
         } catch (Exception e) {
-            throw new RuntimeException("数据安全不通过");
+            throw new RuntimeException("数据安全不通过", e);
         }
     }
 

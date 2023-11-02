@@ -40,9 +40,9 @@ public class ClickImageTextPointsVerify extends VerifyInfo<LinkedList<ClickImage
     @Data
     public static class TextPoint {
 
-        private int X;
+        private Float x;
 
-        private int Y;
+        private Float y;
 
         private String text;
 

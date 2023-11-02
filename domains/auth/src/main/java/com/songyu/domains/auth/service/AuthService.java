@@ -26,6 +26,7 @@ import com.songyu.domains.infrastructure.springboot.config.props.SyAuth;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -441,6 +442,16 @@ public abstract class AuthService {
     public void logout(UserClientTokenPair userClientTokenPair) {
         cacheService.remove(getAuthTokenCacheKey(userClientTokenPair.getClientId()),
                 getAuthRefreshTokenCacheKey(userClientTokenPair.getClientId()));
+    }
+
+    /**
+     * 校验验证码
+     *
+     * @param textPoints 点选文字集
+     * @return 是否验证通过
+     */
+    public Boolean verifyCaptcha(LinkedList<ClickImageTextPointsVerify.TextPoint> textPoints) {
+        return null;
     }
 
 }

@@ -39,6 +39,8 @@
         <mybatis.flex.spring.boot.starter.version>1.6.5</mybatis.flex.spring.boot.starter.version>
         <mybatis.flex.codegen.version>1.6.5</mybatis.flex.codegen.version>
         <jnanoid.version>2.0.0</jnanoid.version>
+        <minio.version>8.5.6</minio.version>
+        <progressbar.version>0.10.0</progressbar.version>
     </properties>
 
     <dependencyManagement>
@@ -107,6 +109,16 @@
                 <artifactId>jnanoid</artifactId>
                 <version>${jnanoid.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>me.tongfei</groupId>
+                <artifactId>progressbar</artifactId>
+                <version>${progressbar.version}</version>
+            </dependency>
             <!--components-->
             <dependency>
                 <groupId>com.songyu.components</groupId>
@@ -115,7 +127,7 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>com.songyu.commonutils</groupId>
+                <groupId>com.songyu.components.commonutils</groupId>
                 <artifactId>common-utils</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
@@ -215,6 +227,13 @@
             <dependency>
                 <groupId>com.songyu.components.jsonweb</groupId>
                 <artifactId>json-web</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>com.songyu.components.oss</groupId>
+                <artifactId>oss</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
                 <optional>true</optional>

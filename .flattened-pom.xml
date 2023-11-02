@@ -30,12 +30,14 @@
     <maven.dependency.plugin.version>3.3.0</maven.dependency.plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <javassist.version>3.29.2-GA</javassist.version>
+    <minio.version>8.5.6</minio.version>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
     <maven.plugin.api.version>3.9.0</maven.plugin.api.version>
     <maven.project.version>2.2.1</maven.project.version>
     <maven.plugin.annotations.version>3.8.1</maven.plugin.annotations.version>
     <maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
+    <progressbar.version>0.10.0</progressbar.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -103,13 +105,23 @@
         <version>${jnanoid.version}</version>
       </dependency>
       <dependency>
+        <groupId>io.minio</groupId>
+        <artifactId>minio</artifactId>
+        <version>${minio.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>me.tongfei</groupId>
+        <artifactId>progressbar</artifactId>
+        <version>${progressbar.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.songyu.components</groupId>
         <artifactId>components</artifactId>
         <version>${project.version}</version>
         <type>pom</type>
       </dependency>
       <dependency>
-        <groupId>com.songyu.commonutils</groupId>
+        <groupId>com.songyu.components.commonutils</groupId>
         <artifactId>common-utils</artifactId>
         <version>${project.version}</version>
         <optional>true</optional>
@@ -196,6 +208,12 @@
       <dependency>
         <groupId>com.songyu.components.jsonweb</groupId>
         <artifactId>json-web</artifactId>
+        <version>${project.version}</version>
+        <optional>true</optional>
+      </dependency>
+      <dependency>
+        <groupId>com.songyu.components.oss</groupId>
+        <artifactId>oss</artifactId>
         <version>${project.version}</version>
         <optional>true</optional>
       </dependency>

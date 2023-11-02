@@ -14,7 +14,7 @@
   <description>接口规范统一</description>
   <dependencies>
     <dependency>
-      <groupId>com.songyu.commonutils</groupId>
+      <groupId>com.songyu.components.commonutils</groupId>
       <artifactId>common-utils</artifactId>
     </dependency>
     <dependency>

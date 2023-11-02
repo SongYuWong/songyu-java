@@ -14,7 +14,7 @@
   <description>验证码组件</description>
   <dependencies>
     <dependency>
-      <groupId>com.songyu.commonutils</groupId>
+      <groupId>com.songyu.components.commonutils</groupId>
       <artifactId>common-utils</artifactId>
     </dependency>
   </dependencies>

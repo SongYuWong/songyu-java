@@ -42,7 +42,7 @@ public class JsonWebSignatureService {
         AlgorithmConstraints algorithmConstraints =
                 new AlgorithmConstraints(
                         AlgorithmConstraints.ConstraintType.PERMIT,
-                        AlgorithmIdentifiers.RSA_PSS_USING_SHA256
+                        AlgorithmIdentifiers.RSA_PSS_USING_SHA512
                 );
         jws.setAlgorithmConstraints(algorithmConstraints);
         try {
@@ -57,7 +57,7 @@ public class JsonWebSignatureService {
     public static String sign(String payload, PrivateKey privateKey) {
         JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(payload);
-        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_PSS_USING_SHA256);
+        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_PSS_USING_SHA512);
         jws.setKey(privateKey);
         try {
             return jws.getCompactSerialization();

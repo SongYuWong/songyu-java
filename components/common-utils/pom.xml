@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.songyu.commonutils</groupId>
+    <groupId>com.songyu.components.commonutils</groupId>
     <artifactId>common-utils</artifactId>
     <name>Common Utils</name>
     <description>通用工具类库</description>

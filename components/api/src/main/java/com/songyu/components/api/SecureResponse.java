@@ -17,7 +17,7 @@ public class SecureResponse<T> {
     /**
      * 响应编码
      */
-    private String code;
+    private Integer code;
 
     /**
      * 认证响应数据
@@ -45,7 +45,7 @@ public class SecureResponse<T> {
         SecureResponse<T> responseAuthorized = new SecureResponse<>();
         //noinspection unchecked
         responseAuthorized.setClazz((Class<T>) response.getData().getClass());
-        responseAuthorized.setCode(responseAuthorized.getCode());
+        responseAuthorized.setCode(response.getCode());
         responseAuthorized.setKey(apiSecureManager.getPublicKeyStr());
         String securityDataStr = apiSecureManager.encryptSecurityDataStr(JSONUtil.toJsonStr(response), publicKey);
         responseAuthorized.setData(securityDataStr);
@@ -53,7 +53,7 @@ public class SecureResponse<T> {
     }
 
     public Response<T> parseResponse(ApiSecureManager apiSecureManager) {
-        Response<?> bean = JSONUtil.toBean(apiSecureManager.decryptSecureDataStr(this.data, this.key), Response.class);
+        Response<?> bean = JSONUtil.toBean(apiSecureManager.decryptSecureDataStrSigned(this.data, this.key), Response.class);
         return new Response<>(bean, this.clazz);
     }
 

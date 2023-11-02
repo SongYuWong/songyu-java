@@ -3,6 +3,7 @@ package com.songyu.commonutils;
 import com.songyu.commonutils.exception.*;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
@@ -437,6 +438,18 @@ public class CommonFileUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 从类资源路径下获取文件的输入流
+     *
+     * @param path 资源路径相对文件路径
+     * @return 文件输入流
+     * @throws IOException 文件读取失败
+     */
+    public static InputStream getInputStreamFromClassPath(String path) throws IOException {
+        File classPathFile = getClassPathFile(path);
+        return Files.newInputStream(classPathFile.toPath());
     }
 
 }

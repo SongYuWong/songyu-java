@@ -22,7 +22,7 @@ public class JsonWebEncryptionService {
     public static String decrypt(String secret, PrivateKey privateKey) {
         JsonWebEncryption receiverJwe = new JsonWebEncryption();
         AlgorithmConstraints algConstraints = new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
-                KeyManagementAlgorithmIdentifiers.RSA_OAEP);
+                KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         receiverJwe.setAlgorithmConstraints(algConstraints);
         AlgorithmConstraints encConstraints = new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT,
                 ContentEncryptionAlgorithmIdentifiers.AES_256_GCM);
@@ -39,7 +39,7 @@ public class JsonWebEncryptionService {
     public static String encrypt(String payload, PublicKey publicKey) {
         JsonWebEncryption senderJwe = new JsonWebEncryption();
         senderJwe.setPlaintext(payload);
-        senderJwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.RSA1_5);
+        senderJwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         senderJwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_256_GCM);
         senderJwe.setKey(publicKey);
         try {

@@ -2,6 +2,7 @@ package com.songyu.commonutils;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import javax.xml.bind.DatatypeConverter;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -45,17 +46,7 @@ public class CommonRsaKeyPairUtils {
     }
 
     private static X509EncodedKeySpec getX509KeySpec(PublicKey publicKey) {
-        KeyFactory rsa;
-        try {
-            rsa = KeyFactory.getInstance("RSA");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            return rsa.getKeySpec(publicKey, X509EncodedKeySpec.class);
-        } catch (InvalidKeySpecException e) {
-            throw new RuntimeException(e);
-        }
+        return new X509EncodedKeySpec(publicKey.getEncoded());
     }
 
     public static String exportPKCS8PrivatePEMKey(PrivateKey privateKey) {
@@ -96,7 +87,23 @@ public class CommonRsaKeyPairUtils {
     }
 
     public static PublicKey importX509PublicKey(String x509Key) {
-        return null;
+        KeyFactory rsa;
+        try {
+            rsa = KeyFactory.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("根据 PEM 格式密钥生成公钥对象失败", e);
+        }
+        byte[] dePem = DatatypeConverter.parseBase64Binary(
+                x509Key
+                        .replace("-----BEGIN PUBLIC KEY-----", "")
+                        .replace("-----END PUBLIC KEY-----", "")
+        );
+        try {
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(dePem);
+            return rsa.generatePublic(keySpec);
+        } catch (InvalidKeySpecException e) {
+            throw new RuntimeException("根据 PEM 格式密钥生成公钥对象失败", e);
+        }
     }
 
     public static PrivateKey importPKCS8PrivateKey(String privateKey) {

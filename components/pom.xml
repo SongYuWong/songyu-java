@@ -24,6 +24,7 @@
         <module>message</module>
         <module>task</module>
         <module>api</module>
+        <module>oss</module>
     </modules>
 
 </project>

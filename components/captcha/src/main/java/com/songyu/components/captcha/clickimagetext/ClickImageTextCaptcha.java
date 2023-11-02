@@ -61,13 +61,13 @@ public class ClickImageTextCaptcha extends Captcha {
         String vcodeTextJson = CommonFileUtils.readClassPathFileContent(vcodeFileDir.getName(), "vcode-text.json");
         JSONObject jsonObject = JSONUtil.parseObj(vcodeTextJson);
         char[] chars = jsonObject.get(String.valueOf(random.nextInt(jsonObject.keySet().size()) + 1)).toString().toCharArray();
-        LinkedList<Integer> xStage = new LinkedList<>();
-        LinkedList<Integer> yStage = new LinkedList<>();
+        LinkedList<Float> xStage = new LinkedList<>();
+        LinkedList<Float> yStage = new LinkedList<>();
         for (char aChar : chars) {
             ClickImageTextPointsVerify.TextPoint textPoint = new ClickImageTextPointsVerify.TextPoint();
             textPoint.setText(String.valueOf(aChar));
-            int x = randomInScopWithSlices(xStage, 300, 30, random);
-            int y = randomInScopWithSlices(yStage, 200, 30 * 0.75, random);
+            float x = randomInScopeWithSlices(xStage, 300, 30, random);
+            float y = randomInScopeWithSlices(yStage, 200, 30 * 0.75, random);
             textPoint.setX(x);
             textPoint.setY(y);
             textPoints.add(textPoint);
@@ -102,12 +102,12 @@ public class ClickImageTextCaptcha extends Captcha {
      * @param random   随机数器
      * @return 新的文字位置
      */
-    private int randomInScopWithSlices(LinkedList<Integer> slices, int maxValue, double stage, Random random) {
-        int x = 0;
+    private float randomInScopeWithSlices(LinkedList<Float> slices, int maxValue, double stage, Random random) {
+        float x = 0f;
         if (!slices.isEmpty()) {
-            int start = 0;
+            float start = 0f;
             for (int i = 0; i < slices.size(); i++) {
-                Integer current = slices.get(i);
+                float current = slices.get(i);
                 if ((x = randomInScope(start, current, stage, random)) > 0) {
                     slices.add(i, x);
                     break;
@@ -135,8 +135,8 @@ public class ClickImageTextCaptcha extends Captcha {
      * @param random 随机数器
      * @return 随机结果
      */
-    private int randomInScope(int start, int stop, double stage, Random random) {
-        if (stop - start <= stage * 2) return -1;
+    private float randomInScope(float start, float stop, double stage, Random random) {
+        if (stop - start <= stage * 2) return -1f;
         return (int) (random.nextInt((int) (stop - start - (stage * 2))) + (stage + start));
     }
 

@@ -3,32 +3,27 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.songyu.components.jarlibcrypto</groupId>
-    <artifactId>jar-lib-crypto</artifactId>
+    <groupId>com.songyu.components</groupId>
+    <artifactId>components</artifactId>
     <version>0.0.1</version>
   </parent>
-  <groupId>com.songyu.components.jarlibcrypto.core</groupId>
-  <artifactId>jar-lib-crypto-core</artifactId>
+  <groupId>com.songyu.components.oss</groupId>
+  <artifactId>oss</artifactId>
   <version>0.0.1</version>
-  <name>Jar Lib Crypto Core</name>
+  <name>OSS</name>
+  <description>对象存储服务组件</description>
   <dependencies>
     <dependency>
-      <groupId>org.javassist</groupId>
-      <artifactId>javassist</artifactId>
+      <groupId>io.minio</groupId>
+      <artifactId>minio</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>me.tongfei</groupId>
+      <artifactId>progressbar</artifactId>
     </dependency>
     <dependency>
       <groupId>com.songyu.components.commonutils</groupId>
       <artifactId>common-utils</artifactId>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>
