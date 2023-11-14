@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.songyu.components</groupId>
     <artifactId>components</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.api</groupId>
   <artifactId>api</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>Api</name>
   <description>接口规范统一</description>
   <dependencies>

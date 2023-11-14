@@ -27,4 +27,6 @@ public class AuthClient extends User {
 
     private String activeCode;
 
+    private String clientKey;
+
 }

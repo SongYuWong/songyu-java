@@ -35,17 +35,20 @@ public abstract class UserManagerService {
     public void createNewUser(User user) throws IllegalUserInfoException,
             UserNotUniqueException {
         user.checkIfPrimaryInfoComplete();
-        User selectedUser = userManagerRepository.getByUserUniqueInfo(user);
+        User selectedUser = userManagerRepository.getByUserAnyUniqueInfo(user);
         if (selectedUser != null) {
-            if (user.getUserName().equals(selectedUser.getUserName())) {
-                throw new UserNotUniqueException("用户名已被使用", user);
-            } else if (user.getUserEmail().equals(selectedUser.getUserEmail())) {
-                throw new UserNotUniqueException("用户邮箱已被使用", user);
-            } else {
-                throw new UserNotUniqueException(user);
+            if (!UserStatus.statusRegistering(selectedUser.getUserStatusCode())) {
+                if (user.getUserName().equals(selectedUser.getUserName())) {
+                    throw new UserNotUniqueException("用户名已被使用", user);
+                } else if (user.getUserEmail().equals(selectedUser.getUserEmail())) {
+                    throw new UserNotUniqueException("用户邮箱已被使用", user);
+                } else {
+                    throw new UserNotUniqueException(user);
+                }
             }
+        } else {
+            userManagerRepository.addNewUser(user);
         }
-        userManagerRepository.addNewUser(user);
     }
 
     /**
@@ -61,7 +64,7 @@ public abstract class UserManagerService {
             throw new RuntimeException("缺少用户唯一性标识。", e);
         }
         if (selectedUser == null) {
-            throw new RuntimeException("用户未注册！");
+            throw new RuntimeException("未找到用户信息！");
         } else {
             try {
                 selectedUser.ifUserStatusValid();
@@ -94,12 +97,11 @@ public abstract class UserManagerService {
      * @return 保存的用户信息
      */
     public User getByUserLoginInfo(User user) {
-        if (CommonStringUtils.isNotBlank(user.getUserName())) {
-            return userManagerRepository.getByUserName(user.getUserName());
-        } else if (CommonStringUtils.isNotBlank(user.getUserEmail())) {
-            return userManagerRepository.getByUserEmail(user.getUserEmail());
+        if (CommonStringUtils.isNotBlank(user.getUserCode())) {
+            return userManagerRepository.getByUserNameOrEmail(user.getUserCode());
+        } else {
+            throw new RuntimeException("缺少用户账户信息");
         }
-        return null;
     }
 
     public UserClient getByClientId(String clientId) {

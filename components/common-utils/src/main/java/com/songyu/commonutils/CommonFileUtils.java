@@ -427,14 +427,26 @@ public class CommonFileUtils {
      */
     public static String readClassPathFileContent(String... paths) {
         File classPathFile = getClassPathFile(paths);
-        String content = "";
-        try (FileInputStream fileInputStream = new FileInputStream(classPathFile);
+        if (classPathFile != null){
+            return readFileContent(classPathFile);
+        }
+        return "";
+    }
+
+    /**
+     * 从文件中读取文件内容
+     * @param file 文件
+     * @return 文件内容
+     */
+    public static String readFileContent(File file) {
+        StringBuilder content = new StringBuilder();
+        try (FileInputStream fileInputStream = new FileInputStream(file);
              BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream))) {
             String temp;
             while ((temp = bufferedReader.readLine()) != null) {
-                content = content.concat(temp);
+                content.append(temp);
             }
-            return content;
+            return content.toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -452,4 +464,21 @@ public class CommonFileUtils {
         return Files.newInputStream(classPathFile.toPath());
     }
 
+    /**
+     * 从路径读取文件内容
+     * @param paths 路径集合
+     * @return 文件内容
+     */
+    public static String readFileContentFromPaths(String... paths) {
+        if (CommonArrayUtils.isNotEmpty(paths)){
+            try {
+                File file = pathsToFile(paths);
+                return readFileContent(file);
+            } catch (SourceNullException e) {
+                throw new RuntimeException(e);
+            }
+        }else {
+            return "";
+        }
+    }
 }

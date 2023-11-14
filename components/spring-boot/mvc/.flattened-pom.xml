@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.songyu.components.springboot</groupId>
     <artifactId>spring-boot</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.springboot.mvc</groupId>
   <artifactId>mvc</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>MVC</name>
   <dependencies>
     <dependency>

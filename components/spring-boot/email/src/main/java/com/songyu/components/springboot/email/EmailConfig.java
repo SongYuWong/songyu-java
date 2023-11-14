@@ -1,8 +1,10 @@
 package com.songyu.components.springboot.email;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -18,6 +20,7 @@ import java.util.Properties;
  * @since 2023/9/21 11:59
  */
 @Configuration
+@PropertySource("classpath:songyu-email.properties")
 public class EmailConfig {
 
     /**
@@ -25,13 +28,19 @@ public class EmailConfig {
      */
     public static final String EmailSender = "songyuwong@163.com";
 
+    @Value("${songyu.email.username}")
+    private String username;
+
+    @Value("${songyu.email.password}")
+    private String password;
+
     @Bean
     @Primary
     public JavaMailSender javaMailSender() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         javaMailSender.setHost("smtp.163.com");
-        javaMailSender.setUsername("ENC(0ovH7QJ5DNAhgNHj5UZl2eGKws/EKb3tmj5nY4sLAF0=)");
-        javaMailSender.setPassword("ENC(TeRAtfp/ccI+hQ37SBX31pnGX3pb10B5l0nkqCC2oxU=)");
+        javaMailSender.setUsername(username);
+        javaMailSender.setPassword(password);
         javaMailSender.setDefaultEncoding("UTF-8");
         Properties mailProperties = new Properties();
         mailProperties.put("mail.smtp.auth", true);

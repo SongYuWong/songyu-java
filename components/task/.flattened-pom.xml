@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.songyu.components</groupId>
     <artifactId>components</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.task</groupId>
   <artifactId>task</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>Task</name>
   <description>任务防腐层</description>
 </project>

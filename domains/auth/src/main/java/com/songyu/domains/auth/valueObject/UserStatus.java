@@ -43,6 +43,15 @@ public enum UserStatus {
         return UserStatus.values()[code];
     }
 
+    /**
+     * 状态码是否是注册
+     * @param userStatusCode 状态码
+     * @return 是否是注册
+     */
+    public static boolean statusRegistering(int userStatusCode) {
+        return REGISTERED.equals(userStatusCode);
+    }
+
     public boolean equals(int code) {
         return this.ordinal() == code;
     }

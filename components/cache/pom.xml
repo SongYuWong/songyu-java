@@ -14,4 +14,12 @@
     <name>Cache</name>
     <description>缓存防腐层组件</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.songyu.components.commonutils</groupId>
+            <artifactId>common-utils</artifactId>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+
 </project>

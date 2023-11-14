@@ -1,11 +1,7 @@
 package com.songyu.domains.auth.aggregate;
 
-import com.songyu.components.captcha.VerifyInfo;
-import com.songyu.components.captcha.clickimagetext.ClickImageTextPointsVerify;
 import com.songyu.domains.auth.entity.User;
 import lombok.Data;
-
-import java.util.LinkedList;
 
 /**
  * <p>
@@ -34,23 +30,8 @@ public class UserLogin {
     private String clientFingerprint;
 
     /**
-     * 验证码种子
-     */
-    private String seeds;
-
-    /**
-     * 验证码
-     */
-    private String verifyCode;
-
-    /**
      * 客户端公钥
      */
     private String clientKey;
-
-    /**
-     * 验证码验证信息
-     */
-    private VerifyInfo<LinkedList<ClickImageTextPointsVerify.TextPoint>> verifyInfo;
 
 }

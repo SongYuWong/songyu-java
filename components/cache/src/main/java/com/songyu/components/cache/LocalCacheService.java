@@ -1,7 +1,11 @@
 package com.songyu.components.cache;
 
+import com.songyu.commonutils.CommonStringUtils;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,7 +31,7 @@ public class LocalCacheService implements CacheService {
     /**
      * 过期时间有序数组
      */
-    private static final CopyOnWriteArrayList<Long> EXPIRE_TIME_ARRAY = new CopyOnWriteArrayList<>();
+    private static final LinkedList<Long> EXPIRE_TIME_ARRAY = new LinkedList<>();
 
     @Override
     public void set(String key, Object payload, long time, TimeUnit timeUnit) {
@@ -43,8 +47,8 @@ public class LocalCacheService implements CacheService {
 
     @Override
     public <T> T get(String key, Class<T> clazz) {
-        clearExpired();
         CacheObjectProxy cacheObjectProxy = CACHE_CONTEXT.get(key);
+        clearExpired();
         if (cacheObjectProxy != null) {
             return cacheObjectProxy.getPayload(clazz);
         }
@@ -54,7 +58,6 @@ public class LocalCacheService implements CacheService {
     @Override
     public void remove(String key) {
         CACHE_CONTEXT.remove(key);
-        clearExpired();
     }
 
     @Override
@@ -65,19 +68,16 @@ public class LocalCacheService implements CacheService {
         clearExpired();
     }
 
-    private void clearExpired() {
-        int index = -1;
-        for (int i = 0; i < EXPIRE_TIME_ARRAY.size(); i++) {
-            if (EXPIRE_TIME_ARRAY.get(i) < System.currentTimeMillis()) {
-                index = i;
-                remove(TIME_KEY_MAP.remove(EXPIRE_TIME_ARRAY.get(i)));
-            } else {
-                break;
-            }
-        }
-        if (index >= 0) {
-            for (int i = -1; i < index; ) {
-                EXPIRE_TIME_ARRAY.remove(++i);
+    synchronized private void clearExpired() {
+        Iterator<Long> iterator = EXPIRE_TIME_ARRAY.iterator();
+        while (iterator.hasNext()) {
+            Long next = iterator.next();
+            if (next < System.currentTimeMillis()) {
+                iterator.remove();
+                String remove = TIME_KEY_MAP.remove(next);
+                if (CommonStringUtils.isNotEmpty(remove)) {
+                    remove(remove);
+                }
             }
         }
     }
@@ -104,24 +104,7 @@ public class LocalCacheService implements CacheService {
             } else {
                 this.expireTime = System.currentTimeMillis() + expireTimeUnit.toMillis(expireTime);
                 TIME_KEY_MAP.put(this.expireTime, key);
-                EXPIRE_TIME_ARRAY.add(0, this.expireTime);
-                insertionSort();
-            }
-        }
-
-        private void insertionSort() {
-            if (LocalCacheService.EXPIRE_TIME_ARRAY.size() <= 1) {
-                return;
-            }
-            int n = LocalCacheService.EXPIRE_TIME_ARRAY.size();
-            for (int i = 1; i < n; i++) {
-                long key = LocalCacheService.EXPIRE_TIME_ARRAY.get(i);
-                int j = i - 1;
-                while (j >= 0 && LocalCacheService.EXPIRE_TIME_ARRAY.get(j) > key) {
-                    LocalCacheService.EXPIRE_TIME_ARRAY.set(j + 1, LocalCacheService.EXPIRE_TIME_ARRAY.get(j));
-                    j--;
-                }
-                LocalCacheService.EXPIRE_TIME_ARRAY.set(j + 1, key);
+                EXPIRE_TIME_ARRAY.add(this.expireTime);
             }
         }
 
@@ -143,7 +126,7 @@ public class LocalCacheService implements CacheService {
                     return clazz.cast(payload);
                 }
             } else {
-                if (expireTime < System.currentTimeMillis()) {
+                if (expireTime > System.currentTimeMillis()) {
                     if (payload != null) {
                         return clazz.cast(payload);
                     }

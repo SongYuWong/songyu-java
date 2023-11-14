@@ -1,12 +1,15 @@
 package com.songyu.components.springboot.email;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
+import javax.annotation.Resource;
+import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
@@ -24,8 +27,8 @@ public class EmailSendService {
 
     private final JavaMailSender mailSender;
 
-    public EmailSendService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    public EmailSendService(JavaMailSender javaMailSender) {
+        this.mailSender = javaMailSender;
     }
 
     public void sendText(String from, String to, String subject, String simpleText) {
@@ -52,7 +55,7 @@ public class EmailSendService {
                 throw new RuntimeException(String.format("邮件格式错误 %s", e.getMessage()), e);
             }
             mailSender.send(message);
-        } catch (MailSendException e) {
+        } catch (Exception e) {
             throw new RuntimeException(parseEmailException(e, from, to), e);
         }
     }
@@ -80,7 +83,7 @@ public class EmailSendService {
         if (t.getMessage().contains("Invalid Addresses")) {
             return "非法的邮件地址 >> ".concat(to);
         } else {
-            return t.getMessage();
+            return "邮件发送失败：" + t.getMessage();
         }
     }
 

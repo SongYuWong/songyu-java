@@ -5,11 +5,17 @@
   <parent>
     <groupId>com.songyu.components</groupId>
     <artifactId>components</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.cache</groupId>
   <artifactId>cache</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>Cache</name>
   <description>缓存防腐层组件</description>
+  <dependencies>
+    <dependency>
+      <groupId>com.songyu.components.commonutils</groupId>
+      <artifactId>common-utils</artifactId>
+    </dependency>
+  </dependencies>
 </project>

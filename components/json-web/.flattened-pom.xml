@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.songyu.components</groupId>
     <artifactId>components</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.jsonweb</groupId>
   <artifactId>json-web</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>Json Web</name>
   <description>Json Web Almost Everything 规范使用</description>
   <dependencies>

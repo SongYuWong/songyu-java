@@ -45,6 +45,14 @@ public abstract class UserManagerRepository {
     public abstract User getByUserEmail(String userEmail);
 
     /**
+     * 根据任意用户唯一标识获取用户信息
+     *
+     * @param user 用户信息
+     * @return 数据库中的用户信息
+     */
+    public abstract User getByUserAnyUniqueInfo(User user) throws IllegalUserInfoException;
+
+    /**
      * 根据用户唯一标识获取用户信息
      *
      * @param user 用户信息
@@ -66,4 +74,13 @@ public abstract class UserManagerRepository {
      * @return 用户客户端数据
      */
     public abstract UserClient getUserClientByClientId(String clientId);
+
+    /**
+     * 根据用户名或者邮箱获取保存了的用户信息
+     *
+     * @param userNameOrEmail 用户名或邮箱
+     * @return 持久化了的用户信息
+     */
+    public abstract User getByUserNameOrEmail(String userNameOrEmail);
+
 }

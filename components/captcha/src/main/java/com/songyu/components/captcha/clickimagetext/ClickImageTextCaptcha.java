@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -36,12 +37,14 @@ public class ClickImageTextCaptcha extends Captcha {
         Graphics2D graphics = (Graphics2D) bufferedImage.getGraphics();
         // 读取背景文件
         BufferedImage read;
-        File vcodeFileDir = CommonFileUtils.getClassPathFile("verify-code");
         Random random = new Random();
+        File vcodeFileDir;
         try {
-            if (Objects.isNull(vcodeFileDir)) {
+            URL resource = ClickImageTextCaptcha.class.getClassLoader().getResource("verify-code");
+            if (Objects.isNull(resource)) {
                 throw new FileNotFoundException("未找到 验证码背景图片 文件夹");
             }
+            vcodeFileDir = new File(resource.getPath());
             File[] vcodeBgs = vcodeFileDir.listFiles();
             if (vcodeBgs == null || vcodeBgs.length == 0) {
                 throw new FileNotFoundException("验证码背景图片中未找到背景图");
@@ -50,15 +53,14 @@ public class ClickImageTextCaptcha extends Captcha {
             File bgFile = new File(vcodeFileDir, vcodeFileName);
             read = ImageIO.read(bgFile);
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("读取背景填充图片失败");
+            throw new RuntimeException("读取背景填充图片失败",e);
         }
         // 填充背景
         graphics.drawImage(read, 0, 0, 300, 200, (img, i, x, y, wid, hei) -> false);
         // 放置文字
         ClickImageTextPointsVerify verifyCodeImageTextPoint = new ClickImageTextPointsVerify();
         LinkedList<ClickImageTextPointsVerify.TextPoint> textPoints = new LinkedList<>();
-        String vcodeTextJson = CommonFileUtils.readClassPathFileContent(vcodeFileDir.getName(), "vcode-text.json");
+        String vcodeTextJson = CommonFileUtils.readFileContentFromPaths(vcodeFileDir.getAbsolutePath(), "vcode-text.json");
         JSONObject jsonObject = JSONUtil.parseObj(vcodeTextJson);
         char[] chars = jsonObject.get(String.valueOf(random.nextInt(jsonObject.keySet().size()) + 1)).toString().toCharArray();
         LinkedList<Float> xStage = new LinkedList<>();

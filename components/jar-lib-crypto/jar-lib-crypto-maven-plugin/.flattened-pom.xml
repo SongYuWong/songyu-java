@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.songyu.components.jarlibcrypto</groupId>
     <artifactId>jar-lib-crypto</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.jarlibcrypto.mavenPlugin</groupId>
   <artifactId>jar-lib-crypto-maven-plugin</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>maven-plugin</packaging>
   <name>Jar Lib Crypto Maven Plugin</name>
   <dependencies>

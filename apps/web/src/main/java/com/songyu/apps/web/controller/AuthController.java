@@ -5,14 +5,12 @@ import com.songyu.components.api.Response;
 import com.songyu.components.api.ResponseStatus;
 import com.songyu.components.api.SecureRequest;
 import com.songyu.components.api.SecureResponse;
-import com.songyu.components.captcha.clickimagetext.ClickImageTextPointsVerify;
 import com.songyu.components.springboot.mvc.utils.RequestParamChecker;
 import com.songyu.components.api.ApiSecureManager;
 import com.songyu.domains.auth.aggregate.AuthClient;
 import com.songyu.domains.auth.aggregate.UserLogin;
 import com.songyu.domains.auth.aggregate.UserRegistered;
 import com.songyu.domains.auth.entity.User;
-import com.songyu.domains.auth.entity.UserClient;
 import com.songyu.domains.auth.entity.UserClientTokenPair;
 import com.songyu.domains.auth.service.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
 
 /**
  * <p>
@@ -45,13 +42,13 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public SecureResponse<User> signup(@RequestBody SecureRequest userSecureRequest) {
+    public SecureResponse<Void> signup(@RequestBody SecureRequest userSecureRequest) {
         User user = userSecureRequest.parseRequest(apiSecureManager, User.class);
         RequestParamChecker.notNull(user, "缺少注册的用户信息。");
         authService.signup(user);
         return SecureResponse.buildWithResponse(
                 apiSecureManager,
-                Response.buildWithPayload(ResponseStatus.SUCCESS, user),
+                Response.buildWithPayload(ResponseStatus.SUCCESS, null),
                 userSecureRequest.getKey()
         );
     }
@@ -80,12 +77,11 @@ public class AuthController {
 
     @PostMapping("/verifyCaptcha")
     public SecureResponse<Boolean> verifyCaptcha(@RequestBody SecureRequest userClientSecureRequest) {
-        //noinspection unchecked
-        LinkedList<ClickImageTextPointsVerify.TextPoint> textPoints = userClientSecureRequest.parseRequest(apiSecureManager, LinkedList.class);
-        Boolean result = authService.verifyCaptcha(textPoints);
+        AuthClient authClient = userClientSecureRequest.parseRequest(apiSecureManager, AuthClient.class);
+        authService.checkCaptcha(authClient);
         return SecureResponse.buildWithResponse(
                 apiSecureManager,
-                Response.buildWithPayload(ResponseStatus.SUCCESS, result),
+                Response.buildWithPayload(ResponseStatus.SUCCESS, null),
                 userClientSecureRequest.getKey()
         );
     }

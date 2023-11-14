@@ -13,6 +13,7 @@ import com.songyu.components.jsonweb.exception.*;
 import com.songyu.components.lock.LockService;
 import com.songyu.components.springboot.email.EmailConfig;
 import com.songyu.components.springboot.email.EmailSendService;
+import com.songyu.domains.auth.aggregate.AuthClient;
 import com.songyu.domains.auth.aggregate.UserLogin;
 import com.songyu.domains.auth.aggregate.UserRegistered;
 import com.songyu.domains.auth.entity.User;
@@ -100,14 +101,9 @@ public abstract class AuthService {
      */
     private void sendUserActiveCode(User user) {
         String redisKey = getUserActiveCodeRedisKey(user);
-        String activeCode = cacheService.get(redisKey, String.class);
-        if (CommonStringUtils.isNotBlank(activeCode)) {
-            emailSendService.sendHtml(EmailConfig.EmailSender, user.getUserEmail(), "用户", activeCode);
-        } else {
-            activeCode = NanoIdUtils.randomNanoId().toUpperCase();
-            cacheService.set(redisKey, activeCode, 5, TimeUnit.MINUTES);
-            emailSendService.sendHtml(EmailConfig.EmailSender, user.getUserEmail(), "用户", activeCode);
-        }
+        String activeCode = NanoIdUtils.randomNanoId().toUpperCase();
+        cacheService.set(redisKey, activeCode, 5, TimeUnit.MINUTES);
+        emailSendService.sendHtml(EmailConfig.EmailSender, user.getUserEmail(), "账户激活", "激活码（五分钟内有效）:" + activeCode);
     }
 
     /**
@@ -119,7 +115,8 @@ public abstract class AuthService {
         String redisKey = getUserActiveCodeRedisKey(userRegistered.getUser());
         String activeCode = cacheService.get(redisKey, String.class);
         if (!userRegistered.ifActiveCodeValid(activeCode)) {
-            throw new RuntimeException("无效的激活码！");
+            sendUserActiveCode(userRegistered.getUser());
+            throw new RuntimeException("无效的激活码！激活码已重新发送请查收。");
         } else {
             userManagerService.activateUser(userRegistered.getUser());
         }
@@ -137,7 +134,7 @@ public abstract class AuthService {
             throw new RuntimeException("缺少必要的客户端唯一号");
         } else {
             Captcha captcha = CaptchaFactory.generatorCaptcha(CaptchaType.CLICK_IMAGE_TEXT, clientId);
-            cacheService.set(getCaptchaRedisKey(clientId), captcha.getVerifyInfo(), 5, TimeUnit.MINUTES);
+            cacheService.set(getCaptchaRedisKey(clientId), captcha.getVerifyInfo(), 30, TimeUnit.SECONDS);
             return captcha.clearVerifyInfo();
         }
     }
@@ -162,8 +159,6 @@ public abstract class AuthService {
      * @return 用户客户端资源聚合
      */
     public UserClientTokenPair login(UserLogin userLogin) {
-        // 校验验证码
-        checkCaptcha(userLogin);
         // 校验用户信息
         User user = checkLoginUserInfo(userLogin.getUser());
         // 生成用户认证信息
@@ -355,7 +350,7 @@ public abstract class AuthService {
     private User checkLoginUserInfo(User user) {
         User savedUser = userManagerService.getByUserLoginInfo(user);
         if (savedUser == null) {
-            throw new RuntimeException("缺少用户信息");
+            throw new RuntimeException("用户未注册");
         }
         try {
             savedUser.ifUserStatusValid();
@@ -369,16 +364,16 @@ public abstract class AuthService {
     /**
      * 校验验证码
      *
-     * @param userLogin 用户登录信息
+     * @param authClient 认证客户端
      */
-    private void checkCaptcha(UserLogin userLogin) {
-        String captchaRedisKey = getCaptchaRedisKey(userLogin.getClientId());
+    public void checkCaptcha(AuthClient authClient) {
+        String captchaRedisKey = getCaptchaRedisKey(authClient.getClientId());
         ClickImageTextPointsVerify savedCaptcha = cacheService.get(captchaRedisKey, ClickImageTextPointsVerify.class);
         if (savedCaptcha == null) {
             throw new RuntimeException("验证码已过期！");
         }
-        if (savedCaptcha.verifyCaptcha(savedCaptcha.getTextPoints())) {
-            throw new RuntimeException("验证码错误！");
+        if (!savedCaptcha.verifyCaptcha(authClient.getCaptcha())) {
+            throw new RuntimeException("验证错误！");
         }
     }
 
@@ -442,16 +437,6 @@ public abstract class AuthService {
     public void logout(UserClientTokenPair userClientTokenPair) {
         cacheService.remove(getAuthTokenCacheKey(userClientTokenPair.getClientId()),
                 getAuthRefreshTokenCacheKey(userClientTokenPair.getClientId()));
-    }
-
-    /**
-     * 校验验证码
-     *
-     * @param textPoints 点选文字集
-     * @return 是否验证通过
-     */
-    public Boolean verifyCaptcha(LinkedList<ClickImageTextPointsVerify.TextPoint> textPoints) {
-        return null;
     }
 
 }

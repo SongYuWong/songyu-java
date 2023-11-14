@@ -44,7 +44,7 @@ public class SecureResponse<T> {
     public static <T> SecureResponse<T> buildWithResponse(ApiSecureManager apiSecureManager, Response<T> response, String publicKey) {
         SecureResponse<T> responseAuthorized = new SecureResponse<>();
         //noinspection unchecked
-        responseAuthorized.setClazz((Class<T>) response.getData().getClass());
+        responseAuthorized.setClazz(response.getData() == null ? null : (Class<T>) response.getData().getClass());
         responseAuthorized.setCode(response.getCode());
         responseAuthorized.setKey(apiSecureManager.getPublicKeyStr());
         String securityDataStr = apiSecureManager.encryptSecurityDataStr(JSONUtil.toJsonStr(response), publicKey);

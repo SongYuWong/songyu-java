@@ -35,6 +35,7 @@ public class UserManagerRepositoryImpl extends UserManagerRepository {
     public void addNewUser(User user) {
         user.setUserStatusCode(UserStatus.REGISTERED.ordinal());
         user.setUserDesc("这个人什么都不想说。");
+        user.setUserTel("");
         userMapper.insert(user);
     }
 
@@ -43,7 +44,7 @@ public class UserManagerRepositoryImpl extends UserManagerRepository {
         if (CommonStringUtils.isBlank(user.getUserEmail())) {
             throw new RuntimeException("无效的激活用户邮箱");
         }
-        UpdateChain.of(userMapper)
+        UpdateChain.of(User.class)
                 .set(User::getUserStatusCode, UserStatus.NORMAL.ordinal())
                 .where(User::getUserEmail).eq(user.getUserEmail())
                 .and(User::getUserStatusCode).eq(UserStatus.REGISTERED.ordinal())
@@ -71,15 +72,34 @@ public class UserManagerRepositoryImpl extends UserManagerRepository {
     }
 
     @Override
-    public User getByUserUniqueInfo(User user) throws IllegalUserInfoException {
+    public User getByUserAnyUniqueInfo(User user) throws IllegalUserInfoException {
         if (CommonStringUtils.allIsBlank(user.getUserCode(), user.getUserName(), user.getUserEmail())) {
             throw new IllegalUserInfoException(user);
         }
         return QueryChain.of(userMapper)
                 .where(User::getUserCode).eq(user.getUserCode(), CommonStringUtils.isNotBlank(user.getUserCode()))
-                .and(User::getUserEmail).eq(user.getUserEmail(), CommonStringUtils.isNotBlank(user.getUserEmail()))
-                .and(User::getUserName).eq(user.getUserName(), CommonStringUtils.isNotBlank(user.getUserName()))
-                .one();
+                .or(User::getUserEmail).eq(user.getUserEmail(), CommonStringUtils.isNotBlank(user.getUserEmail()))
+                .or(User::getUserName).eq(user.getUserName(), CommonStringUtils.isNotBlank(user.getUserName())).one();
+    }
+
+    @Override
+    public User getByUserUniqueInfo(User user) throws IllegalUserInfoException {
+        if (CommonStringUtils.allIsBlank(user.getUserCode(), user.getUserName(), user.getUserEmail())) {
+            throw new IllegalUserInfoException(user);
+        }
+        QueryChain<User> queryChain = QueryChain.of(userMapper)
+                .where(User::getUserCode).eq(user.getUserCode(), CommonStringUtils.isNotBlank(user.getUserCode()));
+        if (CommonStringUtils.anyIsBlank(user.getUserEmail(), user.getUserName())) {
+            queryChain
+                    .or(User::getUserEmail).eq(user.getUserEmail(), CommonStringUtils.isNotBlank(user.getUserEmail()))
+                    .or(User::getUserName).eq(user.getUserName(), CommonStringUtils.isNotBlank(user.getUserName()));
+        } else {
+            queryChain.or(queryWrapper -> {
+                queryWrapper.where(User::getUserEmail).eq(user.getUserEmail(), CommonStringUtils.isNotBlank(user.getUserEmail()))
+                        .and(User::getUserName).eq(user.getUserName(), CommonStringUtils.isNotBlank(user.getUserName()));
+            });
+        }
+        return queryChain.one();
     }
 
     @Override
@@ -91,6 +111,17 @@ public class UserManagerRepositoryImpl extends UserManagerRepository {
     public UserClient getUserClientByClientId(String clientId) {
         return QueryChain.of(userClientMapper)
                 .where(UserClient::getUserClientCode).eq(clientId)
+                .one();
+    }
+
+    @Override
+    public User getByUserNameOrEmail(String userNameOrEmail) {
+        if (CommonStringUtils.isBlank(userNameOrEmail)) {
+            throw new RuntimeException("缺少用户账户信息");
+        }
+        return QueryChain.of(userMapper)
+                .where(User::getUserEmail).eq(userNameOrEmail)
+                .or(User::getUserName).eq(userNameOrEmail)
                 .one();
     }
 

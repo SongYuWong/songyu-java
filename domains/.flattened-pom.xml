@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.songyu</groupId>
     <artifactId>songyu-java</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.domains</groupId>
   <artifactId>domains</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>pom</packaging>
   <name>Domains</name>
   <modules>

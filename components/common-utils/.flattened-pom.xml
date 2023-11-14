@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.songyu.components</groupId>
     <artifactId>components</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.commonutils</groupId>
   <artifactId>common-utils</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>Common Utils</name>
   <description>通用工具类库</description>
   <dependencies>
