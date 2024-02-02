@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.songyu.components.springboot</groupId>
+    <artifactId>spring-boot</artifactId>
+    <version>0.0.2</version>
+  </parent>
+  <groupId>com.songyu.components.springboot.email</groupId>
+  <artifactId>email</artifactId>
+  <version>0.0.2</version>
+  <name>Email</name>
+  <description>邮件发送组件</description>
+  <dependencies>
+    <dependency>
+      <groupId>com.songyu.components.springboot.starter</groupId>
+      <artifactId>starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-freemarker</artifactId>
+    </dependency>
+  </dependencies>
+</project>

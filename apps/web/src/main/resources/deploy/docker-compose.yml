@@ -1,0 +1,30 @@
+version: "3"
+services:
+  song-yu-web:
+    image: java:8
+    restart: always
+    env_file:
+      - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+    hostname: "song-yu-web"
+    container_name: song-yu-web
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /data/container/jhmd/jhmd-core:/usr/jhmd-core
+      - /data/container/jhmd/jhmd-core/logs:/data/container/jhmd/jhmd-core/logs
+      - /etc/localtime:/etc/localtime
+    working_dir: /usr/jhmd-core
+    network_mode: "host"
+    ports:
+      - "9093:9093"
+    extra_hosts:
+      - "jhmk01:192.168.101.111"
+      - "jhmk02:192.168.101.112"
+      - "jhmk03:192.168.101.113"
+      - "jhmk04:192.168.101.114"
+      - "jhmd-core:127.0.0.1"
+    command: java -Djava.security.egd=file:/dev/./urandom -jar -Dfile.encoding=UTF-8 -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=256m -Xms512m -Xmx512m jhmd-core-0.0.1-SNAPSHOT.jar

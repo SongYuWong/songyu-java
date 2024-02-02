@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.songyu.components.springboot</groupId>
+    <artifactId>spring-boot</artifactId>
+    <version>0.0.2</version>
+  </parent>
+  <groupId>com.songyu.components.springboot.redis</groupId>
+  <artifactId>redis</artifactId>
+  <version>0.0.2</version>
+  <name>Redis</name>
+  <description>redis 连接基础组件</description>
+  <dependencies>
+    <dependency>
+      <groupId>com.songyu.components.springboot.starter</groupId>
+      <artifactId>starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.songyu.components.cache</groupId>
+      <artifactId>cache</artifactId>
+    </dependency>
+  </dependencies>
+</project>

@@ -1,9 +1,7 @@
 package com.songyu.components.jarlibcrypto.mavenPlugin;
 
-import cn.hutool.crypto.CipherMode;
 import cn.hutool.crypto.Mode;
 import cn.hutool.crypto.Padding;
-import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.songyu.commonutils.*;
 import com.songyu.commonutils.exception.*;
@@ -23,11 +21,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jose4j.jwk.RsaJsonWebKey;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.NumericDate;
-import org.jose4j.lang.JoseException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -35,15 +28,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import static com.songyu.commonutils.CommonFileUtils.deleteFile;
-import static com.songyu.components.jarlibcrypto.core.JoseUtils.generateToken;
 
 /**
  * <p>
@@ -392,7 +382,7 @@ public class JarLibCrypto extends AbstractMojo {
         HashMap<String, Object> payload = new HashMap<>();
         payload.put("z", key);
         payload.put("l", iv);
-        String token = generateToken(rsaJsonWebKey.getPrivateKey(), rsaJsonWebKey.getKeyId(), className, end, begin, payload);
+        String token = JoseUtils.generateToken(rsaJsonWebKey, className, end, begin, payload);
         try {
             CommonFileUtils.writeFile(Base64.getEncoder().encode(token.getBytes(StandardCharsets.UTF_8)), encryptedDir, String.valueOf(className.hashCode()).concat(".h"));
         } catch (FileWriteException | FileCreateException e) {

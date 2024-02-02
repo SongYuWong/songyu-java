@@ -5,15 +5,21 @@
   <parent>
     <groupId>com.songyu.components</groupId>
     <artifactId>components</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.jarlibcrypto</groupId>
   <artifactId>jar-lib-crypto</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>pom</packaging>
   <name>Jar Lib Crypto</name>
   <modules>
     <module>jar-lib-crypto-core</module>
     <module>jar-lib-crypto-maven-plugin</module>
   </modules>
+  <dependencies>
+    <dependency>
+      <groupId>com.songyu.components.jsonweb</groupId>
+      <artifactId>json-web</artifactId>
+    </dependency>
+  </dependencies>
 </project>

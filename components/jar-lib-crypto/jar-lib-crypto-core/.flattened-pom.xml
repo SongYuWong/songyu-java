@@ -5,11 +5,11 @@
   <parent>
     <groupId>com.songyu.components.jarlibcrypto</groupId>
     <artifactId>jar-lib-crypto</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.jarlibcrypto.core</groupId>
   <artifactId>jar-lib-crypto-core</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>Jar Lib Crypto Core</name>
   <dependencies>
     <dependency>
@@ -17,11 +17,7 @@
       <artifactId>javassist</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.bitbucket.b_c</groupId>
-      <artifactId>jose4j</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.songyu.commonutils</groupId>
+      <groupId>com.songyu.components.commonutils</groupId>
       <artifactId>common-utils</artifactId>
     </dependency>
   </dependencies>

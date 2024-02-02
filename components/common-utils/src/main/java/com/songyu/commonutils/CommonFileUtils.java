@@ -2,10 +2,10 @@ package com.songyu.commonutils;
 
 import com.songyu.commonutils.exception.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 /**
  * <p>
@@ -384,4 +384,101 @@ public class CommonFileUtils {
         }
     }
 
+    /**
+     * 获取系统资源路径下的文件 resource 中的文件
+     *
+     * @param paths 层级文件名称
+     * @return 文件对象
+     */
+    public static File getClassPathFile(String... paths) {
+        if (paths == null || paths.length == 0) {
+            return null;
+        } else {
+            String[] pathList = new String[paths.length + 1];
+            pathList[0] = ClassLoader.getSystemResource(".").getPath();
+            System.arraycopy(paths, 0, pathList, 1, paths.length);
+            try {
+                return pathsToFile(pathList);
+            } catch (SourceNullException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * 获取类资源路径下的文件输入流，并执行某些操作
+     *
+     * @param consumer 文件输入流操作
+     * @param paths    相对类文件路径
+     */
+    public static void doWithClassPathFileInputStream(Consumer<FileInputStream> consumer, String... paths) {
+        File classPathFile = getClassPathFile(paths);
+        try (FileInputStream fileInputStream = new FileInputStream(classPathFile)) {
+            consumer.accept(fileInputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 读取类资源路径下的文件文本内容
+     *
+     * @return 文本内容
+     */
+    public static String readClassPathFileContent(String... paths) {
+        File classPathFile = getClassPathFile(paths);
+        if (classPathFile != null){
+            return readFileContent(classPathFile);
+        }
+        return "";
+    }
+
+    /**
+     * 从文件中读取文件内容
+     * @param file 文件
+     * @return 文件内容
+     */
+    public static String readFileContent(File file) {
+        StringBuilder content = new StringBuilder();
+        try (FileInputStream fileInputStream = new FileInputStream(file);
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream))) {
+            String temp;
+            while ((temp = bufferedReader.readLine()) != null) {
+                content.append(temp);
+            }
+            return content.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 从类资源路径下获取文件的输入流
+     *
+     * @param path 资源路径相对文件路径
+     * @return 文件输入流
+     * @throws IOException 文件读取失败
+     */
+    public static InputStream getInputStreamFromClassPath(String path) throws IOException {
+        File classPathFile = getClassPathFile(path);
+        return Files.newInputStream(classPathFile.toPath());
+    }
+
+    /**
+     * 从路径读取文件内容
+     * @param paths 路径集合
+     * @return 文件内容
+     */
+    public static String readFileContentFromPaths(String... paths) {
+        if (CommonArrayUtils.isNotEmpty(paths)){
+            try {
+                File file = pathsToFile(paths);
+                return readFileContent(file);
+            } catch (SourceNullException e) {
+                throw new RuntimeException(e);
+            }
+        }else {
+            return "";
+        }
+    }
 }

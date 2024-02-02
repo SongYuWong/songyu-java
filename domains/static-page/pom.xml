@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.songyu.domains</groupId>
+        <artifactId>domains</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.songyu.domains.staticPage</groupId>
+    <artifactId>static-page</artifactId>
+    <name>Static Page</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.songyu.components.commonutils</groupId>
+            <artifactId>common-utils</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.songyu.components.springboot.starter</groupId>
+            <artifactId>starter</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.songyu.components.springboot.data</groupId>
+            <artifactId>data</artifactId>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+</project>

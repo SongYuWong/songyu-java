@@ -5,16 +5,27 @@
   <parent>
     <groupId>com.songyu.components</groupId>
     <artifactId>components</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
   <groupId>com.songyu.components.springboot</groupId>
   <artifactId>spring-boot</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <packaging>pom</packaging>
   <name>Spring Boot</name>
   <description>Spring Boot 相关</description>
   <modules>
     <module>starter</module>
     <module>mvc</module>
+    <module>data</module>
+    <module>email</module>
+    <module>redis</module>
   </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
 </project>

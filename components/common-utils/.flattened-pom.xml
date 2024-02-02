@@ -5,18 +5,33 @@
   <parent>
     <groupId>com.songyu.components</groupId>
     <artifactId>components</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
   </parent>
-  <groupId>com.songyu.commonutils</groupId>
+  <groupId>com.songyu.components.commonutils</groupId>
   <artifactId>common-utils</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <name>Common Utils</name>
   <description>通用工具类库</description>
   <dependencies>
     <dependency>
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-all</artifactId>
-      <version>5.8.22</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15on</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.oshi</groupId>
+      <artifactId>oshi-core</artifactId>
     </dependency>
   </dependencies>
 </project>

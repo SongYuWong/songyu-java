@@ -1,0 +1,14 @@
+server:
+  port: 20001
+
+spring:
+  application:
+    name: "web"
+
+mybatis-flex:
+  datasource:
+    SongYuAuth:
+      url: jdbc:mysql://remote:13306/auth
+      username: root
+      password: KUasdlfiae^%3ajashdR2141
+  mapper-locations: classpath:/mappers/**/*.xml

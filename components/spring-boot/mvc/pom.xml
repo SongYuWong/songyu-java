@@ -15,8 +15,35 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.songyu.components.commonutils</groupId>
+            <artifactId>common-utils</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.songyu.components.springboot.starter</groupId>
+            <artifactId>starter</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.songyu.components.api</groupId>
+            <artifactId>api</artifactId>
+            <type>jar</type>
         </dependency>
     </dependencies>
 
