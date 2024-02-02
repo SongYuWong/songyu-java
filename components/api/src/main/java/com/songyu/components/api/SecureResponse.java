@@ -1,6 +1,7 @@
 package com.songyu.components.api;
 
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.Data;
 
 /**
@@ -47,13 +48,13 @@ public class SecureResponse<T> {
         responseAuthorized.setClazz(response.getData() == null ? null : (Class<T>) response.getData().getClass());
         responseAuthorized.setCode(response.getCode());
         responseAuthorized.setKey(apiSecureManager.getPublicKeyStr());
-        String securityDataStr = apiSecureManager.encryptSecurityDataStr(JSONUtil.toJsonStr(response), publicKey);
+        String securityDataStr = apiSecureManager.encryptSecurityDataStr(JSON.toJSONString(response, SerializerFeature.PrettyFormat), publicKey);
         responseAuthorized.setData(securityDataStr);
         return responseAuthorized;
     }
 
     public Response<T> parseResponse(ApiSecureManager apiSecureManager) {
-        Response<?> bean = JSONUtil.toBean(apiSecureManager.decryptSecureDataStrSigned(this.data, this.key), Response.class);
+        Response<?> bean = JSON.parseObject(apiSecureManager.decryptSecureDataStrSigned(this.data, this.key), Response.class);
         return new Response<>(bean, this.clazz);
     }
 

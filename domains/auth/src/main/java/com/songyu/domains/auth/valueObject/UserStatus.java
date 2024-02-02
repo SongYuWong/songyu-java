@@ -28,31 +28,5 @@ public enum UserStatus {
     /**
      * 黑名单用户
      */
-    BLACK;
-
-    /**
-     * 通过枚举序号索引获取用户状态枚举
-     *
-     * @param code 索引号
-     * @return 用户状态枚举
-     */
-    public static UserStatus mathByCode(Integer code) {
-        if (code == null) {
-            return null;
-        }
-        return UserStatus.values()[code];
-    }
-
-    /**
-     * 状态码是否是注册
-     * @param userStatusCode 状态码
-     * @return 是否是注册
-     */
-    public static boolean statusRegistering(int userStatusCode) {
-        return REGISTERED.equals(userStatusCode);
-    }
-
-    public boolean equals(int code) {
-        return this.ordinal() == code;
-    }
+    BLACK
 }

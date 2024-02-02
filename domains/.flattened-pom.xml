@@ -14,5 +14,7 @@
   <name>Domains</name>
   <modules>
     <module>auth</module>
+    <module>sys-info</module>
+    <module>static-page</module>
   </modules>
 </project>

@@ -1,5 +1,9 @@
 package com.songyu.commonutils;
 
+import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * <p>
  * 通用字符串工具类
@@ -79,4 +83,20 @@ public class CommonStringUtils {
         }
         return true;
     }
+
+    public static String encode(String str, String charset) throws UnsupportedEncodingException {
+        return new String(str.getBytes("GBK"), charset);
+    }
+
+    public static boolean isValidEmail(String email) {
+        // 定义邮箱正则表达式
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        // 创建 Pattern 对象
+        Pattern pattern = Pattern.compile(emailRegex);
+        // 创建 Matcher 对象
+        Matcher matcher = pattern.matcher(email);
+        // 判断是否匹配
+        return matcher.matches();
+    }
+
 }

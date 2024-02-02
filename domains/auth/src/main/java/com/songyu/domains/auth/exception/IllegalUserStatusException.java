@@ -1,6 +1,5 @@
 package com.songyu.domains.auth.exception;
 
-import com.songyu.domains.auth.valueObject.UserStatus;
 import lombok.Getter;
 
 /**
@@ -11,34 +10,34 @@ import lombok.Getter;
  * @author songYu
  * @since 2023/9/21 17:08
  */
+@Getter
 public class IllegalUserStatusException extends Exception {
 
     /**
      * 用户状态
      */
-    @Getter
-    private final UserStatus userStatus;
+    private final Integer userStatus;
 
-    public IllegalUserStatusException(UserStatus userStatus) {
+    public IllegalUserStatusException(Integer userStatus) {
         this.userStatus = userStatus;
     }
 
-    public IllegalUserStatusException(String message, UserStatus userStatus) {
+    public IllegalUserStatusException(String message, Integer userStatus) {
         super(message);
         this.userStatus = userStatus;
     }
 
-    public IllegalUserStatusException(String message, Throwable cause, UserStatus userStatus) {
+    public IllegalUserStatusException(String message, Throwable cause, Integer userStatus) {
         super(message, cause);
         this.userStatus = userStatus;
     }
 
-    public IllegalUserStatusException(Throwable cause, UserStatus userStatus) {
+    public IllegalUserStatusException(Throwable cause, Integer userStatus) {
         super(cause);
         this.userStatus = userStatus;
     }
 
-    public IllegalUserStatusException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, UserStatus userStatus) {
+    public IllegalUserStatusException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, Integer userStatus) {
         super(message, cause, enableSuppression, writableStackTrace);
         this.userStatus = userStatus;
     }

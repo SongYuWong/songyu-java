@@ -7,9 +7,10 @@ import com.songyu.components.api.SecureRequest;
 import com.songyu.components.api.SecureResponse;
 import com.songyu.components.springboot.mvc.utils.RequestParamChecker;
 import com.songyu.components.api.ApiSecureManager;
-import com.songyu.domains.auth.aggregate.AuthClient;
 import com.songyu.domains.auth.aggregate.UserLogin;
 import com.songyu.domains.auth.aggregate.UserRegistered;
+import com.songyu.components.api.ApiDoc;
+import com.songyu.domains.auth.entity.CaptchaVerify;
 import com.songyu.domains.auth.entity.User;
 import com.songyu.domains.auth.entity.UserClientTokenPair;
 import com.songyu.domains.auth.service.AuthService;
@@ -42,6 +43,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @ApiDoc(name = "注册", desc = "用户注册", requestType = User.class)
     public SecureResponse<Void> signup(@RequestBody SecureRequest userSecureRequest) {
         User user = userSecureRequest.parseRequest(apiSecureManager, User.class);
         RequestParamChecker.notNull(user, "缺少注册的用户信息。");
@@ -54,6 +56,7 @@ public class AuthController {
     }
 
     @PostMapping("/activation")
+    @ApiDoc(name = "激活用户", desc = "激活用户账户", requestType = UserRegistered.class)
     public SecureResponse<Void> activation(@RequestBody SecureRequest userSecureRequest) {
         UserRegistered userRegistered = userSecureRequest.parseRequest(apiSecureManager, UserRegistered.class);
         RequestParamChecker.notNull(userRegistered, "缺少注册的用户信息。");
@@ -65,6 +68,7 @@ public class AuthController {
     }
 
     @PostMapping("/captcha")
+    @ApiDoc(name = "验证码", desc = "获取验证码", requestType = UserLogin.class, responseType = Captcha.class)
     public SecureResponse<Captcha> captcha(@RequestBody SecureRequest userClientSecureRequest) {
         UserLogin userLogin = userClientSecureRequest.parseRequest(apiSecureManager, UserLogin.class);
         Captcha captcha = authService.generateCaptcha(userLogin);
@@ -76,9 +80,10 @@ public class AuthController {
     }
 
     @PostMapping("/verifyCaptcha")
+    @ApiDoc(name = "校验验证码", desc = "校验验证码是否正确", requestType = CaptchaVerify.class)
     public SecureResponse<Boolean> verifyCaptcha(@RequestBody SecureRequest userClientSecureRequest) {
-        AuthClient authClient = userClientSecureRequest.parseRequest(apiSecureManager, AuthClient.class);
-        authService.checkCaptcha(authClient);
+        CaptchaVerify captcha = userClientSecureRequest.parseRequest(apiSecureManager, CaptchaVerify.class);
+        authService.checkCaptcha(captcha);
         return SecureResponse.buildWithResponse(
                 apiSecureManager,
                 Response.buildWithPayload(ResponseStatus.SUCCESS, null),
@@ -87,6 +92,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @ApiDoc(name = "登入", desc = "用户登录", requestType = UserLogin.class, responseType = UserClientTokenPair.class)
     public SecureResponse<UserClientTokenPair> login(@RequestBody SecureRequest userSecureRequest) {
         UserLogin userLogin = userSecureRequest.parseRequest(apiSecureManager, UserLogin.class);
         RequestParamChecker.notNull(userLogin, "缺少登录信息。");
@@ -100,11 +106,12 @@ public class AuthController {
     }
 
     @PostMapping("/refreshAuth")
+    @ApiDoc(name = "刷新认证", desc = "刷新用户客户端认证信息", requestType = User.class, responseType = UserClientTokenPair.class)
     public SecureResponse<UserClientTokenPair> refreshAuth(
             @RequestBody SecureRequest userClientTokenPairSecureRequest) {
         UserClientTokenPair userClientTokenPair = userClientTokenPairSecureRequest.parseRequest(apiSecureManager, UserClientTokenPair.class);
         RequestParamChecker.notNull(userClientTokenPair, "缺少认证刷新信息。");
-        UserClientTokenPair userClientTokenPairNew = authService.refreshAuth(userClientTokenPair);
+        UserClientTokenPair userClientTokenPairNew = authService.refreshAuth(userClientTokenPair, userClientTokenPairSecureRequest.getKey());
         return SecureResponse.buildWithResponse(
                 apiSecureManager,
                 Response.buildWithPayload(ResponseStatus.SUCCESS, userClientTokenPairNew),
@@ -113,6 +120,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @ApiDoc(name = "登出", desc = "退出登录", requestType = UserClientTokenPair.class)
     public SecureResponse<Void> logout(@RequestBody SecureRequest userClientTokenPairSecureRequest) {
         UserClientTokenPair userClientTokenPair = userClientTokenPairSecureRequest.parseRequest(apiSecureManager, UserClientTokenPair.class);
         RequestParamChecker.notNull(userClientTokenPair, "缺少认证刷新信息。");
@@ -124,8 +132,9 @@ public class AuthController {
     }
 
     @PostMapping("/serverPublicKey")
+    @ApiDoc(name = "服务端公钥", desc = "获取服务端公钥", requestType = Void.class, responseType = String.class)
     public SecureResponse<String> serverPublicKey(@RequestBody SecureRequest serverPublicKey) {
-        AuthClient ignored = serverPublicKey.verifyRequestSign(this.apiSecureManager, AuthClient.class);
+        Void ignore = serverPublicKey.verifyRequestSign(this.apiSecureManager, Void.class);
         return SecureResponse.buildWithResponse(
                 apiSecureManager,
                 Response.buildWithPayload(ResponseStatus.SUCCESS, apiSecureManager.getPublicKeyStr()),

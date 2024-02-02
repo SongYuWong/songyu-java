@@ -1,6 +1,6 @@
 package com.songyu.components.api;
 
-import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.songyu.commonutils.CommonStringUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +37,7 @@ public class SecureRequest {
      */
     public <T> T parseRequest(ApiSecureManager apiSecureManager, Class<T> clazz) {
         validRequestInfo();
-        return JSONUtil.toBean(apiSecureManager.decryptSecureDataStrSigned(this.data, this.key), clazz);
+        return JSON.parseObject(apiSecureManager.decryptSecureDataStrSigned(this.data, this.key), clazz);
     }
 
     /**
@@ -50,7 +50,7 @@ public class SecureRequest {
      */
     public <T> T verifyRequestSign(ApiSecureManager apiSecureManager, Class<T> clazz) {
         validRequestInfo();
-        return JSONUtil.toBean(apiSecureManager.verifySecureDataStrSign(this.data, this.key), clazz);
+        return JSON.parseObject(apiSecureManager.verifySecureDataStrSign(this.data, this.key), clazz);
     }
 
     /**

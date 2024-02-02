@@ -18,6 +18,16 @@
             <groupId>com.songyu.domains.auth</groupId>
             <artifactId>auth</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.songyu.domains.sysInfo</groupId>
+            <artifactId>sys-info</artifactId>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

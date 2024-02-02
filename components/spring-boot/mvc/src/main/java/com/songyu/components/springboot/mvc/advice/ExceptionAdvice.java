@@ -1,5 +1,7 @@
 package com.songyu.components.springboot.mvc.advice;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.songyu.components.api.Response;
 import com.songyu.components.api.ResponseStatus;
 import com.songyu.components.api.exception.ApiException;
@@ -24,7 +26,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(Throwable.class)
     public Response<?> onError(Throwable t) {
         t.printStackTrace();
-        log.error("ERROR : {}", t.toString());
+        log.error("ERROR : {}", JSON.toJSONString(t));
         String message;
         if (isSQLException(t)) {
             message = "数据映射失败";
@@ -48,8 +50,8 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(ApiException.class)
     public Response<?> onApiException(ApiException apiException) {
-        log.error("API Exception : {}", apiException.toString());
         apiException.printStackTrace();
+        log.error("API Exception : {}", JSON.toJSONString(apiException.toString()));
         return Response.buildWithSummary(ResponseStatus.SERVER_ERR, apiException.getMessage());
     }
 

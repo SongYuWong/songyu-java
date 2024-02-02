@@ -1,5 +1,6 @@
 package com.songyu.components.jsonweb;
 
+import cn.hutool.json.JSONUtil;
 import com.songyu.components.jsonweb.exception.*;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -26,6 +27,20 @@ import java.util.concurrent.TimeUnit;
  */
 public class JsonWebTokenService {
 
+    /**
+     * 生成认证令牌
+     *
+     * @param payload         令牌额外载荷数据（密码之类敏感信息不推荐）
+     * @param issuer          令牌提供者约定
+     * @param audience        令牌使用者约定
+     * @param subject         令牌主题约定
+     * @param issuerAt        令牌颁发有效开始时间
+     * @param issuerTimeUnit  时间单位
+     * @param expiredAt       令牌使用过期时间
+     * @param expiredTimeUnit 时间单位
+     * @param jsonWebKey      RSA加密密钥
+     * @return token 令牌
+     */
     public static String generateToken(Object payload,
                                        String issuer,
                                        String audience,
@@ -36,7 +51,7 @@ public class JsonWebTokenService {
                                        TimeUnit expiredTimeUnit,
                                        RsaJsonWebKey jsonWebKey) {
         JwtClaims claims = new JwtClaims();
-        claims.setClaim("payload", payload);
+        claims.setClaim("payload", JSONUtil.toJsonStr(payload));
         claims.setIssuer(issuer);
         claims.setAudience(audience);
         claims.setExpirationTimeMinutesInTheFuture(issuerTimeUnit.toMillis(issuerAt));
@@ -54,6 +69,24 @@ public class JsonWebTokenService {
         }
     }
 
+    /**
+     * 解析认证令牌
+     *
+     * @param payloadType 额外载荷类型
+     * @param token       认证令牌
+     * @param issuer      令牌提供者约定
+     * @param audience    令牌使用者约定
+     * @param subject     令牌主题
+     * @param jsonWebKey  RSA加密密钥
+     * @param <T>         额外载荷泛型定义
+     * @return 认证令牌中携带的额外载荷信息
+     * @throws ExpiredException          令牌已过期异常
+     * @throws InvalidSubjectException   非法令牌主题
+     * @throws InvalidIssuerException    非法令牌提供者
+     * @throws InvalidAudienceException  非法令牌使用者
+     * @throws InvalidSignatureException 非法令牌已被篡改
+     * @throws InvalidJwtException       无效令牌
+     */
     public static <T> T parseToken(Class<T> payloadType,
                                    String token,
                                    String issuer,
@@ -62,21 +95,32 @@ public class JsonWebTokenService {
                                    RsaJsonWebKey jsonWebKey)
             throws ExpiredException, InvalidSubjectException, InvalidIssuerException, InvalidAudienceException,
             InvalidSignatureException, InvalidJwtException {
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+        JwtConsumerBuilder jwtConsumerBuilder = new JwtConsumerBuilder()
                 .setRequireExpirationTime()
                 .setAllowedClockSkewInSeconds(10)
                 .setRequireSubject()
                 .setExpectedSubject(subject)
                 .setExpectedIssuer(issuer)
-                .setExpectedAudience(audience)
-                .setVerificationKey(jsonWebKey.getPublicKey())
+                .setExpectedAudience(audience);
+        if (jsonWebKey == null) {
+            jwtConsumerBuilder.setSkipSignatureVerification();
+        } else {
+            jwtConsumerBuilder.setVerificationKey(jsonWebKey.getPublicKey());
+        }
+        JwtConsumer jwtConsumer = jwtConsumerBuilder
                 .setJwsAlgorithmConstraints(
                         AlgorithmConstraints.ConstraintType.PERMIT, AlgorithmIdentifiers.RSA_USING_SHA256)
                 .build();
         try {
             JwtClaims jwtClaims = jwtConsumer.processToClaims(token);
             try {
-                return jwtClaims.getClaimValue("payload", payloadType);
+                String payload = jwtClaims.getClaimValue("payload", String.class);
+                try {
+                    return JSONUtil.toBean(payload, payloadType);
+                } catch (Exception e) {
+                    //noinspection unchecked
+                    return (T) payload;
+                }
             } catch (MalformedClaimException e) {
                 throw new RuntimeException(e);
             }

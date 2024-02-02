@@ -1,6 +1,8 @@
 package com.songyu.components.springboot.mvc.exception;
 
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * <p>
@@ -41,7 +43,7 @@ public class IllegalRequestParamException extends RuntimeException {
     @Override
     public String toString() {
         return "IllegalRequestParamException{" +
-                "param=" + JSONUtil.toJsonStr(param) +
+                "param=" + JSON.toJSONString(param, SerializerFeature.PrettyFormat) +
                 '}';
     }
 

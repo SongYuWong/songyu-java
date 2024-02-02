@@ -25,6 +25,7 @@
         <module>task</module>
         <module>api</module>
         <module>oss</module>
+        <module>jdbc</module>
     </modules>
 
 </project>

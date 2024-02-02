@@ -20,10 +20,11 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("com.songyu.domains.infrastructure.springboot")
 public class AutoStarterConfig {
 
-    @Bean(name="encryptablePropertyResolver")
+    @Bean(name = "encryptablePropertyResolver")
     EncryptablePropertyResolver encryptablePropertyResolver() {
-        class MyEncryptPropertyResolver implements EncryptablePropertyResolver{
+        class MyEncryptPropertyResolver implements EncryptablePropertyResolver {
             private final PooledPBEStringEncryptor encryptor;
+
             public MyEncryptPropertyResolver(String password) {
                 this.encryptor = new PooledPBEStringEncryptor();
                 SimpleStringPBEConfig config = new SimpleStringPBEConfig();
@@ -33,6 +34,7 @@ public class AutoStarterConfig {
                 config.setStringOutputType("base64");
                 encryptor.setConfig(config);
             }
+
             @Override
             public String resolvePropertyValue(String value) {
                 if (value != null && value.startsWith("env.key>>")) {
@@ -41,8 +43,8 @@ public class AutoStarterConfig {
                 return value;
             }
         }
-        String next = CommonConsoleUIUtils.hiddenScanner("请输入配置信息密钥：");
-        return new MyEncryptPropertyResolver(next);
+//        String next = CommonConsoleUIUtils.hiddenScanner("请输入配置信息密钥：");
+        return new MyEncryptPropertyResolver("KMKCJLYIFKKIQUBU");
     }
 
 }

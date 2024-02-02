@@ -16,6 +16,7 @@ import com.songyu.components.springboot.email.EmailSendService;
 import com.songyu.domains.auth.aggregate.AuthClient;
 import com.songyu.domains.auth.aggregate.UserLogin;
 import com.songyu.domains.auth.aggregate.UserRegistered;
+import com.songyu.domains.auth.entity.CaptchaVerify;
 import com.songyu.domains.auth.entity.User;
 import com.songyu.domains.auth.entity.UserClient;
 import com.songyu.domains.auth.entity.UserClientTokenPair;
@@ -27,7 +28,7 @@ import com.songyu.domains.infrastructure.springboot.config.props.SyAuth;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 
-import java.util.LinkedList;
+import javax.annotation.Resource;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -41,31 +42,23 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AuthService {
 
-    private final UserManagerService userManagerService;
+    @Resource
+    private UserManagerService userManagerService;
 
-    private final EmailSendService emailSendService;
+    @Resource
+    private EmailSendService emailSendService;
 
-    private final CacheService cacheService;
+    @Resource
+    private CacheService cacheService;
 
-    private final ResourceManagerService resourceManagerService;
+    @Resource
+    private ResourceManagerService resourceManagerService;
 
-    private final SyAuth syAuth;
+    @Resource
+    private SyAuth syAuth;
 
-    private final LockService<?> lockService;
-
-    public AuthService(UserManagerService userManagerService,
-                       EmailSendService emailSendService,
-                       CacheService cacheService,
-                       ResourceManagerService resourceManagerService,
-                       SyAuth syAuth,
-                       LockService<?> lockService) {
-        this.userManagerService = userManagerService;
-        this.emailSendService = emailSendService;
-        this.cacheService = cacheService;
-        this.resourceManagerService = resourceManagerService;
-        this.syAuth = syAuth;
-        this.lockService = lockService;
-    }
+    @Resource
+    private LockService<?> lockService;
 
     /**
      * 注册
@@ -162,9 +155,10 @@ public abstract class AuthService {
         // 校验用户信息
         User user = checkLoginUserInfo(userLogin.getUser());
         // 生成用户认证信息
-        Set<String> resourceLabels = resourceManagerService.getUserResourceLabels(user.getUserCode());
-        String clientToken = generateClientToken(resourceLabels, userLogin.getClientId());
-        String clientRefreshToken = generateClientRefreshToken(clientToken, userLogin.getClientId());
+        AuthClient authClient = AuthClient.initWithUser(user);
+        resourceManagerService.authUserResources(authClient);
+        String clientToken = generateClientToken(authClient, userLogin.getClientId());
+        String clientRefreshToken = generateClientRefreshToken(userLogin.getClientKey(), userLogin.getClientId());
         UserClientTokenPair userClientTokenPair = new UserClientTokenPair(clientToken, clientRefreshToken);
         cacheService.set(getAuthTokenCacheKey(userLogin.getClientId()),
                 clientToken,
@@ -177,10 +171,9 @@ public abstract class AuthService {
         // 记录用户登录客户端
         UserClient userClient = new UserClient();
         userClient.setUserClientCode(userLogin.getClientId());
-        userClient.setUserClientKey(userLogin.getClientKey());
-        userClient.setUserClientFingerprint(userLogin.getClientFingerprint());
+        userClient.setUserClientRefreshToken(clientRefreshToken);
         userClient.setUserCode(user.getUserCode());
-        userManagerService.addNewUserClient(userClient);
+        userManagerService.recordUserClient(userLogin.getClientId(), user.getUserCode(), clientRefreshToken);
         return userClientTokenPair;
     }
 
@@ -207,16 +200,17 @@ public abstract class AuthService {
     /**
      * 生成用户客户端认证令牌
      *
-     * @param resourceLabels 用户资源标签集合
-     * @param clientId       客户端 id
+     * @param authClient 客户端认证信息
+     * @param clientId   客户端 id
      * @return 认证令牌
      */
     private String generateClientToken(
-            Set<String> resourceLabels,
+            AuthClient authClient,
             String clientId
     ) {
+        authClient.clearTokenExcepted();
         RsaJsonWebKey rsaJsonWebKey = getOrDefaultClientTokenJWK();
-        return JsonWebTokenService.generateToken(resourceLabels, TokenPairKeys.ISSUER_TOKEN, clientId, TokenPairKeys.SUBJECT_TOKEN,
+        return JsonWebTokenService.generateToken(authClient, TokenPairKeys.ISSUER_TOKEN, clientId, TokenPairKeys.SUBJECT_TOKEN,
                 syAuth.getToken().getIssueTimeSeconds(),
                 TimeUnit.SECONDS,
                 syAuth.getToken().getExpireTimeSeconds(),
@@ -352,6 +346,7 @@ public abstract class AuthService {
         if (savedUser == null) {
             throw new RuntimeException("用户未注册");
         }
+        savedUser.decryptInfo();
         try {
             savedUser.ifUserStatusValid();
         } catch (IllegalUserStatusException e) {
@@ -364,15 +359,15 @@ public abstract class AuthService {
     /**
      * 校验验证码
      *
-     * @param authClient 认证客户端
+     * @param captchaVerify 认证客户端
      */
-    public void checkCaptcha(AuthClient authClient) {
-        String captchaRedisKey = getCaptchaRedisKey(authClient.getClientId());
+    public void checkCaptcha(CaptchaVerify captchaVerify) {
+        String captchaRedisKey = getCaptchaRedisKey(captchaVerify.getClientId());
         ClickImageTextPointsVerify savedCaptcha = cacheService.get(captchaRedisKey, ClickImageTextPointsVerify.class);
         if (savedCaptcha == null) {
             throw new RuntimeException("验证码已过期！");
         }
-        if (!savedCaptcha.verifyCaptcha(authClient.getCaptcha())) {
+        if (!savedCaptcha.verifyCaptcha(captchaVerify.getPoints())) {
             throw new RuntimeException("验证错误！");
         }
     }
@@ -381,18 +376,18 @@ public abstract class AuthService {
      * 刷新认证信息
      *
      * @param userClientTokenPair 旧的认证信息
+     * @param clientKey           客户端公钥
      * @return 用户客户端认证信息对
      */
-    public UserClientTokenPair refreshAuth(UserClientTokenPair userClientTokenPair) {
-        String refreshToken = userClientTokenPair.getRefreshToken();
-        String token;
+    public UserClientTokenPair refreshAuth(UserClientTokenPair userClientTokenPair, String clientKey) {
+        String parsedClientKey;
         try {
-            token = parseClientRefreshToken(refreshToken, userClientTokenPair.getClientId());
+            parsedClientKey = parseClientRefreshToken(userClientTokenPair.getRefreshToken(), userClientTokenPair.getClientId());
         } catch (InvalidSubjectException | InvalidJwtException | ExpiredException | InvalidSignatureException |
                  InvalidIssuerException | InvalidAudienceException e) {
             throw new RuntimeException(e);
         }
-        if (!token.equals(userClientTokenPair.getToken())) {
+        if (!parsedClientKey.equals(clientKey)) {
             throw new RuntimeException("非法的 refresh token");
         }
         while (true) {
@@ -408,16 +403,19 @@ public abstract class AuthService {
                             userClientTokenPair.setRefreshToken(cachedRefreshToken);
                             return;
                         } catch (InvalidSubjectException | InvalidJwtException | ExpiredException |
-                                 InvalidSignatureException | InvalidIssuerException | InvalidAudienceException ignore) {
+                                 InvalidSignatureException | InvalidIssuerException |
+                                 InvalidAudienceException ignore) {
                         }
                     }
                     // 生成新的 token 用户认证信息
-                    UserClient userClient = userManagerService.getByClientId(userClientTokenPair.getClientId());
+                    UserClient userClient = userManagerService.getUserClientByClientId(userClientTokenPair.getClientId());
                     if (userClient == null) {
                         throw new RuntimeException("客户端不存在");
                     }
-                    Set<String> resourceLabels = resourceManagerService.getUserResourceLabels(userClient.getUserCode());
-                    String clientToken = generateClientToken(resourceLabels, userClient.getUserClientCode());
+                    User savedUser = userManagerService.getUserByClientId(userClient.getUserClientCode());
+                    AuthClient authClient = AuthClient.initWithUser(savedUser);
+                    resourceManagerService.authUserResources(authClient);
+                    String clientToken = generateClientToken(authClient, userClient.getUserClientCode());
                     String clientRefreshToken = generateClientRefreshToken(clientToken, userClient.getUserClientCode());
                     userClientTokenPair.setToken(clientToken);
                     userClientTokenPair.setRefreshToken(clientRefreshToken);
@@ -435,6 +433,10 @@ public abstract class AuthService {
      * 登出
      */
     public void logout(UserClientTokenPair userClientTokenPair) {
+        if (userClientTokenPair.getClientId() == null) {
+            throw new RuntimeException("缺少客户端唯一信息");
+        }
+        userManagerService.clearUserClient(userClientTokenPair.getClientId());
         cacheService.remove(getAuthTokenCacheKey(userClientTokenPair.getClientId()),
                 getAuthRefreshTokenCacheKey(userClientTokenPair.getClientId()));
     }

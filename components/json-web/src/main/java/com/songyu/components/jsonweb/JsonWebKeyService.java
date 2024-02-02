@@ -22,7 +22,7 @@ public class JsonWebKeyService {
     public static RsaJsonWebKey generateRsaJsonWebKey(String keyId) {
         RsaJsonWebKey rsaJsonWebKey;
         try {
-            rsaJsonWebKey = RsaJwkGenerator.generateJwk(4096);
+            rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
         } catch (JoseException e) {
             throw new RuntimeException("生成 JWK 失败", e);
         }

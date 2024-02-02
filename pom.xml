@@ -34,6 +34,8 @@
         <maven.project.version>2.2.1</maven.project.version>
         <javassist.version>3.29.2-GA</javassist.version>
         <bcprov.jdk15on.version>1.70</bcprov.jdk15on.version>
+        <fastjson.version>2.0.32</fastjson.version>
+        <bcpkix.jdk15on.version>1.70</bcpkix.jdk15on.version>
         <jose4j.version>0.9.3</jose4j.version>
         <hutool.all.version>5.8.22</hutool.all.version>
         <mybatis.flex.spring.boot.starter.version>1.6.5</mybatis.flex.spring.boot.starter.version>
@@ -41,6 +43,7 @@
         <jnanoid.version>2.0.0</jnanoid.version>
         <minio.version>8.5.6</minio.version>
         <progressbar.version>0.10.0</progressbar.version>
+        <oshi.core.version>6.4.0</oshi.core.version>
         <jasypt.spring.boot.starter.version>3.0.5</jasypt.spring.boot.starter.version>
     </properties>
 
@@ -107,6 +110,18 @@
                 <optional>true</optional>
             </dependency>
             <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>${bcpkix.jdk15on.version}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
                 <groupId>org.bitbucket.b_c</groupId>
                 <artifactId>jose4j</artifactId>
                 <version>${jose4j.version}</version>
@@ -141,6 +156,11 @@
                 <groupId>me.tongfei</groupId>
                 <artifactId>progressbar</artifactId>
                 <version>${progressbar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.oshi</groupId>
+                <artifactId>oshi-core</artifactId>
+                <version>${oshi.core.version}</version>
             </dependency>
             <!--components-->
             <dependency>
@@ -261,6 +281,12 @@
                 <type>jar</type>
                 <optional>true</optional>
             </dependency>
+            <dependency>
+                <groupId>com.songyu.components.jdbc</groupId>
+                <artifactId>jdbc</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
             <!--domains-->
             <dependency>
                 <groupId>com.songyu.domains</groupId>
@@ -271,6 +297,18 @@
             <dependency>
                 <groupId>com.songyu.domains.auth</groupId>
                 <artifactId>auth</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>com.songyu.domains.sysInfo</groupId>
+                <artifactId>sys-info</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>com.songyu.domains.staticPage</groupId>
+                <artifactId>static-page</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
             </dependency>

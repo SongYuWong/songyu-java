@@ -2,6 +2,7 @@ package com.songyu.commonutils;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * <p>
@@ -17,4 +18,7 @@ public class CommonCollectionUtils {
         return collection == null || collection.isEmpty();
     }
 
+    public static boolean isNotEmpty(Collection<?> collection) {
+        return collection != null && !collection.isEmpty();
+    }
 }

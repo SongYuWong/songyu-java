@@ -1,7 +1,9 @@
 package com.songyu.domains.auth.exception;
 
-import cn.hutool.json.JSONUtil;
-import com.songyu.domains.auth.entity.User;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.songyu.components.springboot.data.AbstractTable;
+import com.songyu.components.springboot.exception.IllegalInfoException;
 
 /**
  * <p>
@@ -11,41 +13,30 @@ import com.songyu.domains.auth.entity.User;
  * @author songYu
  * @since 2023/9/21 11:26
  */
-public class IllegalUserInfoException extends Exception {
+public class IllegalUserInfoException extends IllegalInfoException {
 
-    /**
-     * 用户信息
-     */
-    private final User user;
-
-    public IllegalUserInfoException(User user) {
-        this.user = user;
+    public IllegalUserInfoException(AbstractTable abstractTable) {
+        super(abstractTable);
     }
 
-    public IllegalUserInfoException(String message, User user) {
-        super(message);
-        this.user = user;
+    public IllegalUserInfoException(String message, AbstractTable abstractTable) {
+        super(message, abstractTable);
     }
 
-    public IllegalUserInfoException(String message, Throwable cause, User user) {
-        super(message, cause);
-        this.user = user;
+    public IllegalUserInfoException(String message, Throwable cause, AbstractTable abstractTable) {
+        super(message, cause, abstractTable);
     }
 
-    public IllegalUserInfoException(Throwable cause, User user) {
-        super(cause);
-        this.user = user;
+    public IllegalUserInfoException(Throwable cause, AbstractTable abstractTable) {
+        super(cause, abstractTable);
     }
 
-    public IllegalUserInfoException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, User user) {
-        super(message, cause, enableSuppression, writableStackTrace);
-        this.user = user;
+    public IllegalUserInfoException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, AbstractTable abstractTable) {
+        super(message, cause, enableSuppression, writableStackTrace, abstractTable);
     }
 
     @Override
-    public String toString() {
-        return "IllegalUserInfoException{" +
-                "user=" + JSONUtil.toJsonStr(user) +
-                '}';
+    public String tableDesc() {
+        return JSON.toJSONString(abstractTable, SerializerFeature.PrettyFormat);
     }
 }

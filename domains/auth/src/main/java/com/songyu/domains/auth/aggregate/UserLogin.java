@@ -25,11 +25,6 @@ public class UserLogin {
     private String clientId;
 
     /**
-     * 客户端指纹信息
-     */
-    private String clientFingerprint;
-
-    /**
      * 客户端公钥
      */
     private String clientKey;
